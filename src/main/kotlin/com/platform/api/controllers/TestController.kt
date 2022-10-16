@@ -18,22 +18,22 @@ open class TestController
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('STUDENT')")
-    fun userAccess(): String
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    open fun userAccess(): String?
     {
         return "User Content."
     }
 
-    @GetMapping("/student")
-    @PreAuthorize("hasRole('STUDENT')")
-    fun studentAccess(): String
+    @GetMapping("/mod")
+    @PreAuthorize("hasRole('MODERATOR')")
+    open fun moderatorAccess(): String?
     {
-        return "Student Board."
+        return "Moderator Board."
     }
 
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    fun adminAccess(): String
+    open fun adminAccess(): String?
     {
         return "Admin Board."
     }

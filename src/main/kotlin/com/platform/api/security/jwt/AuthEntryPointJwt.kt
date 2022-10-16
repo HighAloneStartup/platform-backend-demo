@@ -11,15 +11,19 @@ import javax.servlet.http.HttpServletResponse
 import kotlin.jvm.Throws
 
 @Component
-class AuthEntryPointJwt : AuthenticationEntryPoint {
+class AuthEntryPointJwt : AuthenticationEntryPoint
+{
     @Throws(IOException::class, ServletException::class)
     override fun commence(request: HttpServletRequest, response: HttpServletResponse,
-                          authException: AuthenticationException) {
+                          authException: AuthenticationException)
+    {
+        logger.info("hello")
         logger.error("Unauthorized error: {}", authException.message)
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized")
     }
 
-    companion object {
+    companion object
+    {
         private val logger = LoggerFactory.getLogger(AuthEntryPointJwt::class.java)
     }
 }

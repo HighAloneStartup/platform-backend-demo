@@ -11,11 +11,13 @@ import kotlin.jvm.Throws
 @Service
 open class UserDetailsServiceImpl(
         private val userRepository: UserRepository
-) : UserDetailsService {
+) : UserDetailsService
+{
 
     @Transactional
     @Throws(UsernameNotFoundException::class)
-    override fun loadUserByUsername(email: String): UserDetails {
+    override fun loadUserByUsername(email: String): UserDetails
+    {
         val user = userRepository.findByEmail(email)
                 ?: throw UsernameNotFoundException("User Not Found with email: $email")
 

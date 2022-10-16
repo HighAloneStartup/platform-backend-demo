@@ -10,17 +10,20 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/users")
 class UserController(
         private val userRepository: UserRepository
-) {
+)
+{
 
     @GetMapping("/")
-    fun getStudent(@RequestParam("objectid") objectid: ObjectId) {
+    fun getStudent(@RequestParam("objectid") objectid: ObjectId)
+    {
         //token 검증. 
         var user = userRepository.findById(objectid)
         // user 출력.
     }
 
     @GetMapping("/classgroup")
-    fun getClassGroupStudents(@RequestParam("classgroup") classGroup: Int) {
+    fun getClassGroupStudents(@RequestParam("classgroup") classGroup: Int)
+    {
 
     }
 

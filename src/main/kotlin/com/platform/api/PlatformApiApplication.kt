@@ -5,9 +5,11 @@ import org.springframework.boot.runApplication
 
 
 @SpringBootApplication
-open class SpringBootSecurityJwtMongodbApplication {
+open class SpringBootSecurityJwtMongodbApplication
+{
 }
 
-fun main(args: Array<String>) {
+fun main(args: Array<String>)
+{
     runApplication<SpringBootSecurityJwtMongodbApplication>(*args)
 }

@@ -9,13 +9,15 @@ import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
-class JwtUtils {
+class JwtUtils
+{
     @Value("\${example.app.jwtSecret}")
     private val jwtSecret: String? = null
 
     @Value("\${example.app.jwtExpirationMs}")
     private val jwtExpirationMs = 0
-    fun generateJwtToken(authentication: Authentication): String {
+    fun generateJwtToken(authentication: Authentication): String
+    {
         val userPrincipal = authentication.principal as UserDetailsImpl
         return Jwts.builder()
                 .setSubject(userPrincipal.username)
@@ -25,29 +27,38 @@ class JwtUtils {
                 .compact()
     }
 
-    fun getUserNameFromJwtToken(token: String?): String {
+    fun getUserNameFromJwtToken(token: String?): String
+    {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).body.subject
     }
 
-    fun validateJwtToken(authToken: String?): Boolean {
-        try {
+    fun validateJwtToken(authToken: String?): Boolean
+    {
+        try
+        {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken)
             return true
-        } catch (e: SignatureException) {
+        } catch (e: SignatureException)
+        {
             logger.error("Invalid JWT signature: {}", e.message)
-        } catch (e: MalformedJwtException) {
+        } catch (e: MalformedJwtException)
+        {
             logger.error("Invalid JWT token: {}", e.message)
-        } catch (e: ExpiredJwtException) {
+        } catch (e: ExpiredJwtException)
+        {
             logger.error("JWT token is expired: {}", e.message)
-        } catch (e: UnsupportedJwtException) {
+        } catch (e: UnsupportedJwtException)
+        {
             logger.error("JWT token is unsupported: {}", e.message)
-        } catch (e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException)
+        {
             logger.error("JWT claims string is empty: {}", e.message)
         }
         return false
     }
 
-    companion object {
+    companion object
+    {
         private val logger = LoggerFactory.getLogger(JwtUtils::class.java)
     }
 }

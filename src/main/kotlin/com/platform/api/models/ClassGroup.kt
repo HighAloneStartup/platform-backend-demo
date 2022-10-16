@@ -9,7 +9,8 @@ class ClassGroup(
         val userIds: List<ObjectId>
 )
 
-enum class Division {
+enum class Division
+{
     SCIENCE,
     LITERATURE
 }

@@ -14,7 +14,8 @@ class Grade(
         val classGroups: List<ClassGroup> = listOf()
 )
 
-enum class GradeYear {
+enum class GradeYear
+{
     FIRST,
     SECOND,
     THIRD

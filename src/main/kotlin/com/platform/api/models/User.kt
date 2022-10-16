@@ -2,6 +2,7 @@ package com.platform.api.models
 
 import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
@@ -10,7 +11,8 @@ class User(
         @Id
         val uid: ObjectId = ObjectId(),
         val name: String,
-        val role: UserRole,
+        @DBRef
+        val roles: Set<Role> = HashSet(),
 
         val email: String,
         val encryptedPassword: String,
@@ -26,9 +28,3 @@ class User(
 
         val photoUrl: String? = null
 )
-
-enum class UserRole {
-    ROLE_ADMIN,
-    ROLE_TEACHER,
-    ROLE_STUDENT,
-}

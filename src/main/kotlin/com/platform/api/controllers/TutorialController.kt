@@ -15,84 +15,112 @@ import java.util.*
 @CrossOrigin(origins = ["http://localhost:9090"])
 @RestController
 @RequestMapping("/api")
-class TutorialController (
+class TutorialController(
         public val tutorialRepository: TutorialRepository
-){
+)
+{
     @GetMapping("/tutorials")
-    fun getAllTutorials(@RequestParam(required = false) title: String?): ResponseEntity<List<Tutorial>> {
-        return try {
+    fun getAllTutorials(@RequestParam(required = false) title: String?): ResponseEntity<List<Tutorial>>
+    {
+        return try
+        {
             var tutorials: List<Tutorial> = if (title == null) tutorialRepository.findAll() as List<Tutorial>
             else tutorialRepository.findByTitleContaining(title) as List<Tutorial>
-            if (tutorials.isEmpty()) {
+            if (tutorials.isEmpty())
+            {
                 ResponseEntity(HttpStatus.NO_CONTENT)
-            } else ResponseEntity(tutorials, HttpStatus.OK)
-        } catch (e: Exception) {
+            }
+            else ResponseEntity(tutorials, HttpStatus.OK)
+        } catch (e: Exception)
+        {
             ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     @GetMapping("/tutorials/{id}")
-    fun getTutorialById(@PathVariable("id") id: String?): ResponseEntity<Tutorial> {
+    fun getTutorialById(@PathVariable("id") id: String?): ResponseEntity<Tutorial>
+    {
         val tutorialData = tutorialRepository.findById(id)
-        return if (tutorialData.isPresent) {
+        return if (tutorialData.isPresent)
+        {
             ResponseEntity(tutorialData.get(), HttpStatus.OK)
-        } else {
+        }
+        else
+        {
             ResponseEntity(HttpStatus.NOT_FOUND)
         }
     }
 
     @PostMapping("/tutorials")
-    fun createTutorial(@RequestBody tutorial: Tutorial): ResponseEntity<Tutorial> {
-        return try {
+    fun createTutorial(@RequestBody tutorial: Tutorial): ResponseEntity<Tutorial>
+    {
+        return try
+        {
             val _tutorial: Tutorial = tutorialRepository.save(Tutorial(tutorial.title, tutorial.description, false))
             ResponseEntity(_tutorial, HttpStatus.CREATED)
-        } catch (e: Exception) {
+        } catch (e: Exception)
+        {
             ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     @PutMapping("/tutorials/{id}")
-    fun updateTutorial(@PathVariable("id") id: String?, @RequestBody tutorial: Tutorial): ResponseEntity<Tutorial?> {
+    fun updateTutorial(@PathVariable("id") id: String?, @RequestBody tutorial: Tutorial): ResponseEntity<Tutorial?>
+    {
         val tutorialData = tutorialRepository.findById(id)
-        return if (tutorialData.isPresent) {
+        return if (tutorialData.isPresent)
+        {
             val _tutorial = tutorialData.get()
             _tutorial.title = tutorial.title
             _tutorial.description = tutorial.description
             _tutorial.isPublished = tutorial.isPublished
             ResponseEntity.ok(tutorialRepository.save(_tutorial))
-        } else {
+        }
+        else
+        {
             ResponseEntity(HttpStatus.NOT_FOUND)
         }
     }
 
     @DeleteMapping("/tutorials/{id}")
-    fun deleteTutorial(@PathVariable("id") id: String?): ResponseEntity<HttpStatus> {
-        return try {
+    fun deleteTutorial(@PathVariable("id") id: String?): ResponseEntity<HttpStatus>
+    {
+        return try
+        {
             tutorialRepository.deleteById(id)
             ResponseEntity(HttpStatus.NO_CONTENT)
-        } catch (e: Exception) {
+        } catch (e: Exception)
+        {
             ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     @DeleteMapping("/tutorials")
-    fun deleteAllTutorials(): ResponseEntity<HttpStatus> {
-        return try {
+    fun deleteAllTutorials(): ResponseEntity<HttpStatus>
+    {
+        return try
+        {
             tutorialRepository.deleteAll()
             ResponseEntity(HttpStatus.NO_CONTENT)
-        } catch (e: Exception) {
+        } catch (e: Exception)
+        {
             ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     @GetMapping("/tutorials/published")
-    fun findByPublished(): ResponseEntity<List<Tutorial>> {
-        return try {
+    fun findByPublished(): ResponseEntity<List<Tutorial>>
+    {
+        return try
+        {
             val tutorials = tutorialRepository.findByPublished(true) as List<Tutorial>
-            if (tutorials.isEmpty()) {
+            if (tutorials.isEmpty())
+            {
                 ResponseEntity(HttpStatus.NO_CONTENT)
-            } else ResponseEntity(tutorials, HttpStatus.OK)
-        } catch (e: Exception) {
+            }
+            else ResponseEntity(tutorials, HttpStatus.OK)
+        } catch (e: Exception)
+        {
             ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }

@@ -9,16 +9,19 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/grades")
 class GradeController(
         private val gradeRepository: GradeRepository
-) {
+)
+{
 
     @GetMapping
-    fun getAll(): MutableList<Grade> {
+    fun getAll(): MutableList<Grade>
+    {
         return gradeRepository.findAll()
     }
 
     //학년 반 넣으면 각반의 학생을 돌려주는 api
     @GetMapping("/classgroup")
-    fun getClassGroupStudents(@RequestParam("classgroup") classGroup: Int) {
+    fun getClassGroupStudents(@RequestParam("classgroup") classGroup: Int)
+    {
 
     }
 

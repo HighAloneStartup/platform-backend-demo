@@ -17,7 +17,7 @@ open class UserController(
 {
 
     @GetMapping("/")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun getStudent(@RequestParam("objectid") objectid: ObjectId)
     {
         var user = userRepository.findById(objectid)

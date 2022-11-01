@@ -1,9 +1,11 @@
 package com.platform.api.controllers
 
-import com.platform.api.models.ClassGroup
 import com.platform.api.models.GradeYear
 import com.platform.api.models.User
+import com.platform.api.payload.response.UserResponse
 import com.platform.api.repository.UserRepository
+import com.platform.api.security.services.UserDetailsImpl
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -16,34 +18,38 @@ open class MemberController(
 )
 {
     @GetMapping("/")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun getUsers(@RequestParam(required = false)
                  gradeYear: GradeYear?,
-                classGroup: ClassGroup?): ResponseEntity<*>
+                classGroup: Int?): ResponseEntity<*>
     {
-        var users: List<User>
-
+        var userDetail: List<UserResponse>
         if(gradeYear == null && classGroup == null)
         {
-            users = userRepository.findAll() as List<User>
+            val user = userRepository.findAll() as List<User>
+            userDetail = user.map{ UserResponse(it) }
+
         }
         else if(classGroup == null)
         {
-            users = userRepository.findByGradeYear(gradeYear!!) as List<User>
+            val user = userRepository.findByGradeYear(gradeYear!! as GradeYear) as List<User>
+            userDetail = user.map { UserResponse(it) }
         }
         else if(gradeYear == null)
         {
-            users = userRepository.findByClassGroup(classGroup) as List<User>
+            val user = userRepository.findByClassGroup(classGroup) as List<User>
+            userDetail = user.map{ UserResponse(it)}
         }
         else
         {
-            users = userRepository.findByGradeYearAndClassGroup(gradeYear, classGroup) as List<User>
+            val user = userRepository.findByGradeYearAndClassGroup(gradeYear, classGroup) as List<User>
+            userDetail = user.map{ UserResponse(it)}
         }
 
-        return if (users.isEmpty())
+        return if (userDetail.isEmpty())
         {
             ResponseEntity.notFound().build<User>()
         }
-        else ResponseEntity.ok(users)
+        else ResponseEntity(userDetail, HttpStatus.OK)
     }
 }

@@ -79,7 +79,7 @@ open class AuthController(
 
         if (strRoles == null)
         {
-            val userRole: Role = roleRepository.findByName(ERole.ROLE_USER)
+            val userRole: Role = roleRepository.findByName(ERole.ROLE_STUDENT)
                     ?.orElseThrow(Supplier { RuntimeException("Error: Role is not found.") })!!
             roles.add(userRole)
         }
@@ -109,7 +109,7 @@ open class AuthController(
                     }
                     else ->
                     {
-                        val userRole: Role? = roleRepository.findByName(ERole.ROLE_USER)
+                        val userRole: Role? = roleRepository.findByName(ERole.ROLE_STUDENT)
                                 ?.orElseThrow(Supplier { RuntimeException("Error: Role is not found.") })
                         if (userRole != null)
                         {

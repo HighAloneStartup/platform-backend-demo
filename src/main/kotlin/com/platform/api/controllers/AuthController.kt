@@ -26,7 +26,7 @@ import javax.validation.Valid
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
-class AuthController(
+open class AuthController(
         private val userRepository: UserRepository,
         private val roleRepository: RoleRepository,
         private val authenticationManager: AuthenticationManager,

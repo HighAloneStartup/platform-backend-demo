@@ -1,30 +1,33 @@
 package com.platform.api.controllers
 
+import com.platform.api.payload.response.JwtResponse
 import com.platform.api.repository.GradeRepository
 import com.platform.api.repository.UserRepository
 import org.bson.types.ObjectId
+import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/api/users")
-class UserController(
+open class UserController(
         private val userRepository: UserRepository
 )
 {
 
     @GetMapping("/")
-    fun getStudent(@RequestParam("objectid") objectid: ObjectId)
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    open fun getStudent(@RequestParam("objectid") objectid: ObjectId)
     {
-        //token 검증. 
         var user = userRepository.findById(objectid)
-        // user 출력.
+        ResponseEntity.ok(user)
     }
 
-    @GetMapping("/classgroup")
-    fun getClassGroupStudents(@RequestParam("classgroup") classGroup: Int)
-    {
-
-    }
+//    @GetMapping("/")
+//    open fun getGradeStudents(@RequestParam("gradeYear") classGroup: Int)
+//    {
+//
+//    }
 
 }

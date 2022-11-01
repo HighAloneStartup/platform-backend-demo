@@ -17,6 +17,9 @@ class UserFactory
                     name = registerRequest.name,
                     roles = roles,
                     email = registerRequest.email,
+                    gradeYear = registerRequest.gradeYear,
+                    classGroup = registerRequest.classGroup,
+
                     encryptedPassword = passwordEncoder.encode(registerRequest.password)
             )
         }

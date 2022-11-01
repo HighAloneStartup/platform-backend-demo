@@ -15,7 +15,7 @@ import java.util.*
 @CrossOrigin(origins = ["http://localhost:9090"])
 @RestController
 @RequestMapping("/api")
-class TutorialController(
+open class TutorialController(
         public val tutorialRepository: TutorialRepository
 )
 {
@@ -124,4 +124,5 @@ class TutorialController(
             ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
 }

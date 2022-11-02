@@ -1,7 +1,5 @@
 package com.platform.api.controllers
 
-import com.platform.api.payload.response.JwtResponse
-import com.platform.api.repository.GradeRepository
 import com.platform.api.repository.UserRepository
 import org.bson.types.ObjectId
 import org.springframework.http.ResponseEntity

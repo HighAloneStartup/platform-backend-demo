@@ -17,7 +17,7 @@ open class User(
         val email: String,
         val encryptedPassword: String,
 
-        val gradeYear: GradeYear? = null,
+        val gradeYear: Int? = null,
         val classGroup: Int? = null,
         val attendanceNumber: Int? = null,
 

@@ -1,6 +1,5 @@
 package com.platform.api.controllers
 
-import com.platform.api.models.GradeYear
 import com.platform.api.models.User
 import com.platform.api.payload.response.UserResponse
 import com.platform.api.repository.UserRepository
@@ -20,7 +19,7 @@ open class MemberController(
     @GetMapping("/")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun getUsers(@RequestParam(required = false)
-                 gradeYear: GradeYear?,
+                 gradeYear: Int?,
                 classGroup: Int?): ResponseEntity<*>
     {
         var userDetail: List<UserResponse>
@@ -32,7 +31,7 @@ open class MemberController(
         }
         else if(classGroup == null)
         {
-            val user = userRepository.findByGradeYear(gradeYear!! as GradeYear) as List<User>
+            val user = gradeYear?.let { userRepository.findByGradeYear(it) } as List<User>
             userDetail = user.map { UserResponse(it) }
         }
         else if(gradeYear == null)

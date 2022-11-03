@@ -24,7 +24,7 @@ open class User(
         val generationNumber: Int? = null,
         val studentNumber: Int? = null,
         val birthday: Date? = null,
-        val phoneNumber: String? = null,
+        var phoneNumber: String? = null,
 
         val photoUrl: String? = null
 )

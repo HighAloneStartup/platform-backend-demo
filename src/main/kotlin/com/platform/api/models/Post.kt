@@ -2,16 +2,27 @@ package com.platform.api.models
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import java.time.Instant
+import java.util.*
 
 
-@Document(collection = "boards")
-class BoardPost
+@Document(collection = "posts")
+class Post
 {
     @Id
     val id: String? = null
     var title: String? = null
     var description: String? = null
     var isPublished = false
+    private val userId: String? = null
+    private val originalUserId: String? = null
+    private val content: String? = null
+    private val image: String? = null
+    private val createdAt: Instant? = null
+
+    var love: List<String> = ArrayList()
+    var share: List<String> = ArrayList()
+    var comment: List<Comment> = ArrayList<Comment>()
 
     constructor()
     {

@@ -1,26 +1,26 @@
 package com.platform.api.controllers
 
-import com.platform.api.repository.BoardRepository
-import com.platform.api.models.BoardPost
+import com.platform.api.repository.PostRepository
+import com.platform.api.models.Post
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 
-@CrossOrigin(origins = ["http://localhost:9090"])
+@CrossOrigin(origins = ["*"], maxAge = 3600)
 @RestController
 @RequestMapping("/api")
-open class BoardController(
-        val boardRepository: BoardRepository
+open class PostController(
+        val postRepository: PostRepository
 )
 {
-    @GetMapping("/boards")
-    fun getAllTutorials(@RequestParam(required = false) title: String?): ResponseEntity<List<BoardPost>>
+    @GetMapping("/posts")
+    fun getAllTutorials(@RequestParam(required = false) title: String?): ResponseEntity<List<Post>>
     {
         return try
         {
-            var boardPosts: List<BoardPost> = if (title == null) boardRepository.findAll() as List<BoardPost>
-            else boardRepository.findByTitleContaining(title) as List<BoardPost>
+            var boardPosts: List<Post> = if (title == null) postRepository.findAll() as List<Post>
+            else postRepository.findByTitleContaining(title) as List<Post>
             if (boardPosts.isEmpty())
             {
                 ResponseEntity(HttpStatus.NO_CONTENT)
@@ -32,10 +32,10 @@ open class BoardController(
         }
     }
 
-    @GetMapping("/boards/{id}")
-    fun getTutorialById(@PathVariable("id") id: String?): ResponseEntity<BoardPost>
+    @GetMapping("/posts/{id}")
+    fun getTutorialById(@PathVariable("id") id: String?): ResponseEntity<Post>
     {
-        val tutorialData = boardRepository.findById(id)
+        val tutorialData = postRepository.findById(id)
         return if (tutorialData.isPresent)
         {
             ResponseEntity(tutorialData.get(), HttpStatus.OK)
@@ -46,12 +46,12 @@ open class BoardController(
         }
     }
 
-    @PostMapping("/boards")
-    fun createTutorial(@RequestBody boardPost: BoardPost): ResponseEntity<BoardPost>
+    @PostMapping("/posts")
+    fun createTutorial(@RequestBody boardPost: Post): ResponseEntity<Post>
     {
         return try
         {
-            val _boardPost: BoardPost = boardRepository.save(BoardPost(boardPost.title, boardPost.description, false))
+            val _boardPost: Post = postRepository.save(Post(boardPost.title, boardPost.description, false))
             ResponseEntity(_boardPost, HttpStatus.CREATED)
         } catch (e: Exception)
         {
@@ -59,17 +59,17 @@ open class BoardController(
         }
     }
 
-    @PutMapping("/boards/{id}")
-    fun updateTutorial(@PathVariable("id") id: String?, @RequestBody boardPost: BoardPost): ResponseEntity<BoardPost?>
+    @PutMapping("/posts/{id}")
+    fun updateTutorial(@PathVariable("id") id: String?, @RequestBody boardPost: Post): ResponseEntity<Post?>
     {
-        val tutorialData = boardRepository.findById(id)
+        val tutorialData = postRepository.findById(id)
         return if (tutorialData.isPresent)
         {
             val _tutorial = tutorialData.get()
             _tutorial.title = boardPost.title
             _tutorial.description = boardPost.description
             _tutorial.isPublished = boardPost.isPublished
-            ResponseEntity.ok(boardRepository.save(_tutorial))
+            ResponseEntity.ok(postRepository.save(_tutorial))
         }
         else
         {
@@ -77,12 +77,12 @@ open class BoardController(
         }
     }
 
-    @DeleteMapping("/boards/{id}")
+    @DeleteMapping("/posts/{id}")
     fun deleteTutorial(@PathVariable("id") id: String?): ResponseEntity<HttpStatus>
     {
         return try
         {
-            boardRepository.deleteById(id)
+            postRepository.deleteById(id)
             ResponseEntity(HttpStatus.NO_CONTENT)
         } catch (e: Exception)
         {
@@ -90,12 +90,12 @@ open class BoardController(
         }
     }
 
-    @DeleteMapping("/boards")
+    @DeleteMapping("/posts")
     fun deleteAllTutorials(): ResponseEntity<HttpStatus>
     {
         return try
         {
-            boardRepository.deleteAll()
+            postRepository.deleteAll()
             ResponseEntity(HttpStatus.NO_CONTENT)
         } catch (e: Exception)
         {
@@ -103,12 +103,12 @@ open class BoardController(
         }
     }
 
-    @GetMapping("/boards/published")
-    fun findByPublished(): ResponseEntity<List<BoardPost>>
+    @GetMapping("/posts/published")
+    fun findByPublished(): ResponseEntity<List<Post>>
     {
         return try
         {
-            val tutorials = boardRepository.findByPublished(true) as List<BoardPost>
+            val tutorials = postRepository.findByPublished(true) as List<Post>
             if (tutorials.isEmpty())
             {
                 ResponseEntity(HttpStatus.NO_CONTENT)

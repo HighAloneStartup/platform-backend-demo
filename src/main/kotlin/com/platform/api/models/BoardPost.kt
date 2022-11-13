@@ -4,8 +4,8 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
 
-@Document(collection = "tutorials")
-class Tutorial
+@Document(collection = "boards")
+class BoardPost
 {
     @Id
     val id: String? = null
@@ -26,6 +26,6 @@ class Tutorial
 
     override fun toString(): String
     {
-        return "Tutorial [id=" + id + ", title=" + title + ", desc=" + description + ", published=" + isPublished + "]"
+        return "Post [id=" + id + ", title=" + title + ", desc=" + description + ", published=" + isPublished + "]"
     }
 }

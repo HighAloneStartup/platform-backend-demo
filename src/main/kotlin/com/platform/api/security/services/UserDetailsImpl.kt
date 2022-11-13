@@ -5,6 +5,7 @@ import org.bson.types.ObjectId
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.util.*
 import java.util.stream.Collectors
 
 
@@ -13,16 +14,27 @@ class UserDetailsImpl(
         val name: String,
         val email: String,
         private val password: String,
-        private val authorities: Collection<GrantedAuthority>
+        private val authorities: Collection<GrantedAuthority>,
+        val gradeYear: Int? = null,
+        val classGroup: Int? = null,
+        val attendanceNumber: Int? = null,
+
+        val generationNumber: Int? = null,
+        val studentNumber: Int? = null,
+        val birthday: Date? = null,
+        var phoneNumber: String? = null,
+
+        val photoUrl: String? = null
 ) : UserDetails
 {
+
 
     override fun getAuthorities(): Collection<GrantedAuthority>
     {
         return authorities
     }
 
-    override fun getPassword(): String?
+    override fun getPassword(): String
     {
         return password
     }
@@ -74,7 +86,16 @@ class UserDetailsImpl(
                     user.name,
                     user.email,
                     user.encryptedPassword,
-                    authorities)
+                    authorities,
+                    user.gradeYear,
+                    user.classGroup,
+                    user.attendanceNumber,
+                    user.generationNumber,
+                    user.studentNumber,
+                    user.birthday,
+                    user.phoneNumber,
+                    user.photoUrl
+            )
         }
     }
 }

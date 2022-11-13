@@ -11,11 +11,11 @@ open class User(
         @Id
         val uid: ObjectId = ObjectId(),
         val name: String,
-        @DBRef
-        val roles: Set<Role> = HashSet(),
 
+        @DBRef
         val email: String,
         val encryptedPassword: String,
+        val roles: Set<Role> = HashSet(),
 
         val gradeYear: Int? = null,
         val classGroup: Int? = null,
@@ -26,5 +26,5 @@ open class User(
         val birthday: Date? = null,
         var phoneNumber: String? = null,
 
-        val photoUrl: String? = null
+        var photoUrl: String? = null
 )

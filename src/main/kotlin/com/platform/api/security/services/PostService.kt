@@ -26,37 +26,32 @@ class PostService(
 {
     fun insertPost(postRequest: PostRequest): BoardPost {
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
-        val user: User = userRepository.findByEmail(userDetailsImpl.email)!!
+        val _user: User = userRepository.findById(userDetailsImpl.id).get()
+
         val boardPost = BoardPost(
             title = postRequest.title,
             description = postRequest.description,
             published = postRequest.published,
 
-            uid = user.uid,
-            userName = user.name,
-            userImage = user.photoUrl,
+            user = _user,
 
-            roles = user.roles,
             anonymous = postRequest.anonymous
         )
-
+        System.out.println(boardPost)
         boardRepository.save(boardPost)
 
         return boardPost;
     }
 
     fun updatePost(id: String, postRequest: PostRequest): BoardPost {
-        val beforeBoardPost = boardRepository.findById(id).get()!!
+        val beforeBoardPost = boardRepository.findById(id).get()
         val afterBoardPost = BoardPost(
             title = postRequest.title,
             description = postRequest.description,
             published = postRequest.published,
 
-            uid = beforeBoardPost.uid,
-            userName = beforeBoardPost.userName,
-            userImage = beforeBoardPost.userImage,
+            user = beforeBoardPost.user,
 
-            roles = beforeBoardPost.roles,
             anonymous = postRequest.anonymous
         )
         boardRepository.save(afterBoardPost)

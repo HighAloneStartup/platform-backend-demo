@@ -21,12 +21,11 @@ open class BoardController(
 {
     @GetMapping("/boards")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun getAllTutorials(@RequestParam(required = false) title: String?): ResponseEntity<List<BoardPost>>
+    open fun getAllTutorials(): ResponseEntity<List<BoardPost>>
     {
         return try
         {
-            var boardPosts: List<BoardPost> = if (title == null) boardRepository.findAll() as List<BoardPost>
-            else boardRepository.findByTitleContaining(title) as List<BoardPost>
+            var boardPosts: List<BoardPost> = boardRepository.findAll() as List<BoardPost>
             if (boardPosts.isEmpty())
             {
                 ResponseEntity(HttpStatus.NO_CONTENT)
@@ -34,6 +33,7 @@ open class BoardController(
             else ResponseEntity(boardPosts, HttpStatus.OK)
         } catch (e: Exception)
         {
+            System.out.println(e)
             ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }

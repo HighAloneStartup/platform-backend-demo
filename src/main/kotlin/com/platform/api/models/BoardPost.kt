@@ -18,16 +18,15 @@ class BoardPost(
         val published: Boolean = true,
 
         @DBRef
-        val uid: ObjectId,
-        val userName: String?,
-        val userImage: String?,
-        @DBRef
-        val roles: Set<Role>?,
+        val user: User,
+
         val anonymous: Boolean = true,
 
         val createdAt: Instant = Instant.now(),
-        var likes: List<String> = ArrayList<String>(),
+        @DBRef
+        var likes: List<ObjectId> = ArrayList<ObjectId>(),
         var images: List<String> = ArrayList<String>(),
+        @DBRef
         var comments: List<Comment> = ArrayList<Comment>()
 )
 {

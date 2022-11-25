@@ -13,7 +13,7 @@ class UserResponse(
 user: User
 )
 {
-    val uid: ObjectId = user.uid
+    val uid: String = user.uid.toString()
     val name: String = user.name
     val authorities: Collection<GrantedAuthority> = user.roles.stream()
             .map { role -> SimpleGrantedAuthority(role.name?.name) }

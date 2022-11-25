@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api")
 open class BoardController(
         private val boardRepository: BoardRepository,
-        private var postService: PostService
+        private val postService: PostService
 )
 {
     @GetMapping("/boards")

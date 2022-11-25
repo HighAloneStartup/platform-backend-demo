@@ -46,8 +46,7 @@ class PostService(
     }
 
     fun updatePost(id: String, postRequest: PostRequest): BoardPost {
-        val beforePostData = boardRepository.findById(id)!!
-        val beforeBoardPost = beforePostData.get()
+        val beforeBoardPost = boardRepository.findById(id).get()!!
         val afterBoardPost = BoardPost(
             title = postRequest.title,
             description = postRequest.description,

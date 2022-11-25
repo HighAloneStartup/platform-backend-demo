@@ -1,6 +1,8 @@
 package com.platform.api.security.services
 
+import com.platform.api.models.User
 import com.platform.api.repository.UserRepository
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -22,5 +24,12 @@ open class UserDetailsServiceImpl(
                 ?: throw UsernameNotFoundException("User Not Found with email: $email")
 
         return UserDetailsImpl.build(user)
+    }
+
+    open fun loadMyUser(): User
+    {
+        val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
+        val user = userRepository.findById(userDetailsImpl.id).get()
+        return user;
     }
 }

@@ -2,6 +2,9 @@ package com.platform.api.controllers
 
 import com.platform.api.repository.BoardRepository
 import com.platform.api.models.BoardPost
+import com.platform.api.payload.request.PostRequest
+import com.platform.api.security.services.PostService
+import com.platform.api.security.services.UserDetailsServiceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -12,7 +15,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 open class BoardController(
-        private val boardRepository: BoardRepository
+        private val boardRepository: BoardRepository,
+        private var postService: PostService
 )
 {
     @GetMapping("/boards")
@@ -51,11 +55,11 @@ open class BoardController(
 
     @PostMapping("/boards")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun createTutorial(@RequestBody boardPost: BoardPost): ResponseEntity<BoardPost>
+    open fun createTutorial(@RequestBody postRequest: PostRequest): ResponseEntity<BoardPost>
     {
         return try
         {
-            val _boardPost: BoardPost = boardRepository.save(BoardPost("", boardPost.title, boardPost.description, true))
+            val _boardPost: BoardPost = postService.insertPost(postRequest);
             ResponseEntity(_boardPost, HttpStatus.CREATED)
         } catch (e: Exception)
         {
@@ -66,18 +70,9 @@ open class BoardController(
 
     @PutMapping("/boards/{id}")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun updateTutorial(@PathVariable("id") id: String?, @RequestBody boardPost: BoardPost): ResponseEntity<BoardPost?>
+    open fun updateTutorial(@PathVariable("id") id: String, @RequestBody postRequest: PostRequest): ResponseEntity<BoardPost?>
     {
-        val tutorialData = boardRepository.findById(id)
-        return if (tutorialData.isPresent)
-        {
-            val _tutorial = tutorialData.get()
-            ResponseEntity.ok(boardRepository.save(BoardPost(_tutorial.id, boardPost.title, boardPost.description, boardPost.published)))
-        }
-        else
-        {
-            ResponseEntity(HttpStatus.NOT_FOUND)
-        }
+        return ResponseEntity.ok(postService.updatePost(id, postRequest))
     }
 
     @DeleteMapping("/boards/{id}")

@@ -1,6 +1,7 @@
 package com.platform.api.repository
 
 import com.platform.api.models.BoardPost
+import org.bson.types.ObjectId
 import org.springframework.data.mongodb.repository.MongoRepository
 
 

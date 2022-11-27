@@ -3,6 +3,9 @@ package com.platform.api.controllers
 import com.platform.api.repository.BoardRepository
 import com.platform.api.models.BoardPost
 import com.platform.api.payload.request.PostRequest
+import com.platform.api.payload.response.PostListResponse
+import com.platform.api.payload.response.PostResponse
+import com.platform.api.payload.response.UserResponse
 import com.platform.api.security.services.PostService
 import com.platform.api.security.services.UserDetailsServiceImpl
 import org.springframework.http.HttpStatus
@@ -21,7 +24,7 @@ open class BoardController(
 {
     @GetMapping("/boards")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun getAllTutorials(): ResponseEntity<List<BoardPost>>
+    open fun getAllTutorials(): ResponseEntity<List<PostListResponse>>
     {
         return try
         {
@@ -30,62 +33,14 @@ open class BoardController(
             {
                 ResponseEntity(HttpStatus.NO_CONTENT)
             }
-            else ResponseEntity(boardPosts, HttpStatus.OK)
+            else
+            {
+                var postListResponse = boardPosts.map{ PostListResponse(it) }
+                ResponseEntity(postListResponse, HttpStatus.OK)
+            }
         } catch (e: Exception)
         {
-            System.out.println(e)
             ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    @GetMapping("/boards/{id}")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun getTutorialById(@PathVariable("id") id: String?): ResponseEntity<BoardPost>
-    {
-        val tutorialData = boardRepository.findById(id)
-        return if (tutorialData.isPresent)
-        {
-            ResponseEntity(tutorialData.get(), HttpStatus.OK)
-        }
-        else
-        {
-            ResponseEntity(HttpStatus.NOT_FOUND)
-        }
-    }
-
-    @PostMapping("/boards")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun createTutorial(@RequestBody postRequest: PostRequest): ResponseEntity<BoardPost>
-    {
-        return try
-        {
-            val _boardPost: BoardPost = postService.insertPost(postRequest);
-            ResponseEntity(_boardPost, HttpStatus.CREATED)
-        } catch (e: Exception)
-        {
-            System.out.println(e)
-            ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
-
-    @PutMapping("/boards/{id}")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun updateTutorial(@PathVariable("id") id: String, @RequestBody postRequest: PostRequest): ResponseEntity<BoardPost?>
-    {
-        return ResponseEntity.ok(postService.updatePost(id, postRequest))
-    }
-
-    @DeleteMapping("/boards/{id}")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun deleteTutorial(@PathVariable("id") id: String?): ResponseEntity<HttpStatus>
-    {
-        return try
-        {
-            boardRepository.deleteById(id)
-            ResponseEntity(HttpStatus.NO_CONTENT)
-        } catch (e: Exception)
-        {
-            ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -103,22 +58,57 @@ open class BoardController(
         }
     }
 
-    @GetMapping("/boards/published")
+
+
+    @GetMapping("/boards/{id}")
     @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    open fun findByPublished(): ResponseEntity<List<BoardPost>>
+    open fun getPostById(@PathVariable("id") id: String?): ResponseEntity<PostResponse>
+    {
+        val postData = boardRepository.findById(id)
+        return if (postData.isPresent)
+        {
+            var postResponse = PostResponse(postData.get())
+            ResponseEntity(postResponse, HttpStatus.OK)
+        }
+        else
+        {
+            ResponseEntity(HttpStatus.NOT_FOUND)
+        }
+    }
+
+    @PostMapping("/boards")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    open fun createPost(@RequestBody postRequest: PostRequest): ResponseEntity<PostResponse>
     {
         return try
         {
-            val tutorials = boardRepository.findByPublished(true) as List<BoardPost>
-            if (tutorials.isEmpty())
-            {
-                ResponseEntity(HttpStatus.NO_CONTENT)
-            }
-            else ResponseEntity(tutorials, HttpStatus.OK)
+            val boardPost = postService.insertPost(postRequest);
+            ResponseEntity(PostResponse(boardPost), HttpStatus.CREATED)
+        } catch (e: Exception)
+        {
+            ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    @PutMapping("/boards/{id}")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    open fun updateTutorial(@PathVariable("id") id: String, @RequestBody postRequest: PostRequest): ResponseEntity<PostResponse>
+    {
+        val boardPost = postService.updatePost(id, postRequest)
+        return ResponseEntity.ok(PostResponse(boardPost))
+    }
+
+    @DeleteMapping("/boards/{id}")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    open fun deleteTutorial(@PathVariable("id") id: String?): ResponseEntity<HttpStatus>
+    {
+        return try
+        {
+            boardRepository.deleteById(id)
+            ResponseEntity(HttpStatus.NO_CONTENT)
         } catch (e: Exception)
         {
             ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
 }

@@ -24,7 +24,7 @@ class BoardPost(
 
         val createdAt: Instant = Instant.now(),
         @DBRef
-        var likes: List<ObjectId> = ArrayList<ObjectId>(),
+        var likes: List<String> = ArrayList<String>(),
         var images: List<String> = ArrayList<String>(),
         @DBRef
         var comments: List<Comment> = ArrayList<Comment>()

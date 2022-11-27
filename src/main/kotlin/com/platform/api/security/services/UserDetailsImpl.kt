@@ -9,7 +9,7 @@ import java.util.stream.Collectors
 
 
 class UserDetailsImpl(
-        val id: ObjectId,
+        val id: String,
         val name: String,
         val email: String,
         private val password: String,

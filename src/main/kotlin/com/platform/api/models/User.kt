@@ -7,9 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
 @Document(collection = "users")
-open class User(
+class User(
         @Id
-        val uid: ObjectId = ObjectId(),
+        val uid: String = String(),
         val name: String,
         @DBRef
         val roles: Set<Role> = HashSet(),

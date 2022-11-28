@@ -28,7 +28,7 @@ class PostService(
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val _user: User = userRepository.findById(userDetailsImpl.id).get()
 
-        val boardPost = BoardPost(
+        var boardPost = BoardPost(
             title = postRequest.title,
             description = postRequest.description,
             published = postRequest.published,
@@ -37,8 +37,7 @@ class PostService(
 
             anonymous = postRequest.anonymous
         )
-        System.out.println(boardPost)
-        boardRepository.save(boardPost)
+        boardPost = boardRepository.save(boardPost)
 
         return boardPost;
     }

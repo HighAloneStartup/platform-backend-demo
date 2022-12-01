@@ -27,6 +27,6 @@ class PostResponse(
         val createdAt: Instant = boardPost.createdAt
 
         var isLiked: Boolean = boardPost.likes.contains(uid)
-        var images: Array<String> = boardPost.images
-        var comments: Array<Comment> = boardPost.comments
+        var images: ArrayList<String> = boardPost.images
+        var comments: ArrayList<Comment> = boardPost.comments
 }

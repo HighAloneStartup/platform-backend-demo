@@ -28,14 +28,14 @@ class PostService(
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val _user: User = userRepository.findById(userDetailsImpl.id).get()
 
-        val imagesPath : Array<String>
+        val imagesPath : ArrayList<String>
         if(postRequest.images !=null)
         {
             imagesPath = postRequest.images
         }
         else
         {
-            imagesPath = arrayOf<String>()
+            imagesPath = ArrayList<String>()
         }
 
         var boardPost = BoardPost(
@@ -56,14 +56,14 @@ class PostService(
     fun updatePost(id: String, postRequest: PostRequest): BoardPost {
         val beforeBoardPost = boardRepository.findById(id).get()
 
-        val imagesPath : Array<String>
+        val imagesPath : ArrayList<String>
         if(postRequest.images !=null)
         {
             imagesPath = postRequest.images
         }
         else
         {
-            imagesPath = arrayOf<String>()
+            imagesPath = ArrayList<String>()
         }
 
         val afterBoardPost = BoardPost(
@@ -75,6 +75,37 @@ class PostService(
 
             anonymous = postRequest.anonymous,
             images = imagesPath
+        )
+        boardRepository.save(afterBoardPost)
+        return afterBoardPost;
+    }
+
+    fun updateLike(id: String): BoardPost {
+        val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
+        val _user: User = userRepository.findById(userDetailsImpl.id).get()
+
+        val beforeBoardPost = boardRepository.findById(id).get()
+
+        val newlikes = beforeBoardPost.likes
+
+        if(newlikes.contains(_user)){
+            newlikes.remove(_user)
+        }
+        else
+        {
+            newlikes.add(_user)
+        }
+
+        val afterBoardPost = BoardPost(
+                title = beforeBoardPost.title,
+                description = beforeBoardPost.description,
+                published = beforeBoardPost.published,
+
+                user = beforeBoardPost.user,
+
+                anonymous = beforeBoardPost.anonymous,
+                images = beforeBoardPost.images,
+                likes = newlikes
         )
         boardRepository.save(afterBoardPost)
         return afterBoardPost;

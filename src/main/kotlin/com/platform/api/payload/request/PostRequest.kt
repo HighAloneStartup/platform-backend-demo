@@ -14,5 +14,5 @@ class PostRequest(
         var description: @NotBlank String,
         var published: Boolean = true,
         val anonymous: Boolean = true,
-        val images: Array<String>? = arrayOf<String>()
+        val images: ArrayList<String>? = ArrayList<String>()
 )

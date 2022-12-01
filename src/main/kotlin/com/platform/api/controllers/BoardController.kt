@@ -113,4 +113,12 @@ open class BoardController(
             ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    @PutMapping("/boards/like/{id}")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    open fun updateLike(@PathVariable("id") id: String): ResponseEntity<PostResponse>
+    {
+        val boardPost = postService.updateLike(id)
+        return ResponseEntity.ok(PostResponse(boardPost))
+    }
 }

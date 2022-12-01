@@ -27,12 +27,11 @@ class AwsS3Service(
         val imagePathList: MutableList<String> = ArrayList()
         for (multipartFile in multipartFileList) {
             val originalName = UUID.randomUUID().toString() + "-" + multipartFile.originalFilename // 파일 이름
-            val size = multipartFile.size // 파일 크기
+            val size = multipartFile.size
             val objectMetaData = ObjectMetadata()
             objectMetaData.contentType = multipartFile.contentType
             objectMetaData.contentLength = size
 
-            // S3에 업로드
             amazonS3Client!!.putObject(
                     PutObjectRequest(S3Bucket, originalName, multipartFile.inputStream, objectMetaData)
                             .withCannedAcl(CannedAccessControlList.PublicRead)

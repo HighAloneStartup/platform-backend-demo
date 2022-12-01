@@ -24,10 +24,10 @@ class BoardPost(
 
         val createdAt: Instant = Instant.now(),
         @DBRef
-        var likes: List<String> = ArrayList<String>(),
-        var images: List<String> = ArrayList<String>(),
+        var likes: Array<String> = arrayOf<String>(),
+        var images: Array<String> = arrayOf<String>(),
         @DBRef
-        var comments: List<Comment> = ArrayList<Comment>()
+        var comments: Array<Comment> = arrayOf<Comment>()
 )
 {
     override fun toString(): String

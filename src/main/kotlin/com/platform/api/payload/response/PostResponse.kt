@@ -15,7 +15,8 @@ class PostResponse(
 {
         val id: String = boardPost.id
         val title: String = boardPost.title
-        val description: String = boardPost.description.substring(20)
+        val description: String = if(boardPost.description.length > 20)
+                boardPost.description.substring(0, 20) else  boardPost.description
         val published: Boolean = boardPost.published
 
         val uid: String = boardPost.user.uid
@@ -26,6 +27,6 @@ class PostResponse(
         val createdAt: Instant = boardPost.createdAt
 
         var isLiked: Boolean = boardPost.likes.contains(uid)
-        var images: List<String> = boardPost.images
-        var comments: List<Comment> = boardPost.comments
+        var images: Array<String> = boardPost.images
+        var comments: Array<Comment> = boardPost.comments
 }

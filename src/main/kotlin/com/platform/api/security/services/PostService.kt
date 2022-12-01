@@ -28,6 +28,16 @@ class PostService(
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val _user: User = userRepository.findById(userDetailsImpl.id).get()
 
+        val imagesPath : Array<String>
+        if(postRequest.images !=null)
+        {
+            imagesPath = postRequest.images
+        }
+        else
+        {
+            imagesPath = arrayOf<String>()
+        }
+
         var boardPost = BoardPost(
             title = postRequest.title,
             description = postRequest.description,
@@ -35,7 +45,8 @@ class PostService(
 
             user = _user,
 
-            anonymous = postRequest.anonymous
+            anonymous = postRequest.anonymous,
+            images = imagesPath
         )
         boardPost = boardRepository.save(boardPost)
 
@@ -44,6 +55,17 @@ class PostService(
 
     fun updatePost(id: String, postRequest: PostRequest): BoardPost {
         val beforeBoardPost = boardRepository.findById(id).get()
+
+        val imagesPath : Array<String>
+        if(postRequest.images !=null)
+        {
+            imagesPath = postRequest.images
+        }
+        else
+        {
+            imagesPath = arrayOf<String>()
+        }
+
         val afterBoardPost = BoardPost(
             title = postRequest.title,
             description = postRequest.description,
@@ -51,7 +73,8 @@ class PostService(
 
             user = beforeBoardPost.user,
 
-            anonymous = postRequest.anonymous
+            anonymous = postRequest.anonymous,
+            images = imagesPath
         )
         boardRepository.save(afterBoardPost)
         return afterBoardPost;

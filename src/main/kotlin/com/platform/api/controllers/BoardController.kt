@@ -40,6 +40,8 @@ open class BoardController(
             }
         } catch (e: Exception)
         {
+            System.out.println(e)
+
             ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }

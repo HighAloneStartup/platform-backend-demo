@@ -26,5 +26,5 @@ class User(
         val birthday: Date? = null,
         var phoneNumber: String? = null,
 
-        val photoUrl: String? = null
+        var photoUrl: String? = null
 )

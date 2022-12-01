@@ -1,6 +1,8 @@
 package com.platform.api.controllers
 
 import com.platform.api.models.User
+import com.platform.api.payload.request.PostRequest
+import com.platform.api.payload.request.ProfileRequest
 import com.platform.api.payload.response.UserResponse
 import com.platform.api.repository.UserRepository
 import com.platform.api.security.services.PostService
@@ -61,6 +63,17 @@ open class MemberController(
     open fun getMine() : ResponseEntity<*>
     {
         val user = userDetailsService.loadMyUser()
+        var userResponse = UserResponse(user)
+
+        return ResponseEntity.ok(userResponse)
+    }
+
+    @PutMapping("/mine")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    open fun updateMine(@RequestBody profileRequest: ProfileRequest) : ResponseEntity<*>
+    {
+        profileRequest
+        val user = userDetailsService.updateMyUser(profileRequest)
         var userResponse = UserResponse(user)
 
         return ResponseEntity.ok(userResponse)

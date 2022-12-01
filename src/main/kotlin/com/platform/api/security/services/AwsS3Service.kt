@@ -41,4 +41,19 @@ class AwsS3Service(
         }
         return imagePathList
     }
+
+    fun upload(multipartFile: MultipartFile): String {
+        val originalName = UUID.randomUUID().toString() + "-" + multipartFile.originalFilename // 파일 이름
+        val size = multipartFile.size
+        val objectMetaData = ObjectMetadata()
+        objectMetaData.contentType = multipartFile.contentType
+        objectMetaData.contentLength = size
+
+        amazonS3Client!!.putObject(
+                PutObjectRequest(S3Bucket, originalName, multipartFile.inputStream, objectMetaData)
+                        .withCannedAcl(CannedAccessControlList.PublicRead)
+        )
+        val imagePath = amazonS3Client.getUrl(S3Bucket, originalName).toString() // 접근가능한 URL 가져오기
+        return imagePath
+    }
 }

@@ -1,6 +1,8 @@
 package com.platform.api.security.services
 
+import com.platform.api.models.BoardPost
 import com.platform.api.models.User
+import com.platform.api.payload.request.ProfileRequest
 import com.platform.api.repository.UserRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
@@ -30,6 +32,17 @@ open class UserDetailsServiceImpl(
     {
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val user = userRepository.findById(userDetailsImpl.id).get()
-        return user;
+        return user
+    }
+
+    open fun updateMyUser(profileRequest: ProfileRequest): User
+    {
+        val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
+        val user = userRepository.findById(userDetailsImpl.id).get()
+        user.phoneNumber = profileRequest.phoneNumber
+        user.photoUrl = profileRequest.photoUrl
+        userRepository.save(user)
+
+        return user
     }
 }

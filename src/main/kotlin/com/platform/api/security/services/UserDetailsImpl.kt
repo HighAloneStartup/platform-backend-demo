@@ -66,7 +66,7 @@ class UserDetailsImpl(
         fun build(user: User): UserDetailsImpl
         {
             val authorities: List<GrantedAuthority> = user.roles.stream()
-                    .map { role -> SimpleGrantedAuthority(role.name?.name) }
+                    .map { role -> SimpleGrantedAuthority(role.name) }
                     .collect(Collectors.toList())
 
             return UserDetailsImpl(

@@ -8,15 +8,5 @@ class Role
 {
     @Id
     var id: String? = null
-    var name: ERole? = null
-
-    constructor()
-    {
-    }
-
-    constructor(name: ERole?)
-    {
-        this.name = name
-    }
-
+    var name: String? = null
 }

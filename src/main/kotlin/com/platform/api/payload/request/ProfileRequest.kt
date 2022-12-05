@@ -7,5 +7,6 @@ import java.util.*
 
 class ProfileRequest (
         var phoneNumber: String? = null,
-        val photoUrl: String? = null
+        val photoUrl: String? = null,
+        val roles: ArrayList<String>? = ArrayList<String>()
 )

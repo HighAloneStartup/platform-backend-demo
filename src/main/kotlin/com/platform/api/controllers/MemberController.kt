@@ -69,7 +69,6 @@ open class MemberController(
     }
 
     @PutMapping("/mine")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun updateMine(@RequestBody profileRequest: ProfileRequest) : ResponseEntity<*>
     {
         profileRequest

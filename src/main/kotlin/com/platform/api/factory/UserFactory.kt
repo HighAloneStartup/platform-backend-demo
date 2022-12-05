@@ -11,7 +11,7 @@ class UserFactory
     {
         private val passwordEncoder = BCryptPasswordEncoder()
 
-        fun newInitialUser(registerRequest: RegisterRequest, roles: MutableSet<Role>): User
+        fun newInitialUser(registerRequest: RegisterRequest, roles: ArrayList<Role>): User
         {
             return User(
                     name = registerRequest.name,

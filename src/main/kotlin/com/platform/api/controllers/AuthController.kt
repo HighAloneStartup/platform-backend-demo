@@ -75,13 +75,14 @@ open class AuthController(
         }
 
         val strRoles: Set<String>? = registerRequest.roles
-        val roles: MutableSet<Role> = HashSet<Role>()
+        val roles: ArrayList<Role> = ArrayList<Role>()
 
         if (strRoles == null)
         {
-            val userRole: Role = roleRepository.findByName(ERole.ROLE_STUDENT)
-                    ?.orElseThrow(Supplier { RuntimeException("Error: Role is not found.") })!!
-            roles.add(userRole)
+            val userRole: Role? = roleRepository.findByName("ROLE_STUDENT")
+            if (userRole != null) {
+                roles.add(userRole)
+            }
         }
         else
         {
@@ -91,8 +92,7 @@ open class AuthController(
                 {
                     "admin" ->
                     {
-                        val adminRole: Role? = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                ?.orElseThrow(Supplier { RuntimeException("Error: Role is not found.") })
+                        val adminRole: Role? = roleRepository.findByName("ROLE_ADMIN")
                         if (adminRole != null)
                         {
                             roles.add(adminRole)
@@ -100,8 +100,7 @@ open class AuthController(
                     }
                     "mod" ->
                     {
-                        val modRole: Role? = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                                ?.orElseThrow(Supplier { RuntimeException("Error: Role is not found.") })
+                        val modRole: Role? = roleRepository.findByName("ROLE_MODERATOR")
                         if (modRole != null)
                         {
                             roles.add(modRole)
@@ -109,8 +108,7 @@ open class AuthController(
                     }
                     else ->
                     {
-                        val userRole: Role? = roleRepository.findByName(ERole.ROLE_STUDENT)
-                                ?.orElseThrow(Supplier { RuntimeException("Error: Role is not found.") })
+                        val userRole: Role? = roleRepository.findByName("ROLE_STUDENT")
                         if (userRole != null)
                         {
                             roles.add(userRole)

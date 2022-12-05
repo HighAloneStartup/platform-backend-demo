@@ -15,9 +15,7 @@ user: User
 {
     val uid: String = user.uid.toString()
     val name: String = user.name
-    val authorities: Collection<GrantedAuthority> = user.roles.stream()
-            .map { role -> SimpleGrantedAuthority(role.name?.name) }
-            .collect(Collectors.toList())
+    val roles: ArrayList<Role> = user.roles
     val email: String = user.email
 
     val gradeYear: Int? = user.gradeYear

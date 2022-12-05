@@ -12,7 +12,7 @@ class User(
         val uid: String = String(),
         val name: String,
         @DBRef
-        val roles: Set<Role> = HashSet(),
+        val roles: ArrayList<Role> = ArrayList<Role>(),
 
         val email: String,
         val encryptedPassword: String,

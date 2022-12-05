@@ -119,6 +119,7 @@ open class BoardController(
     open fun updateLike(@PathVariable("id") id: String): ResponseEntity<PostResponse>
     {
         val boardPost = postService.updateLike(id)
-        return ResponseEntity.ok(PostResponse(boardPost))
+
+        return ResponseEntity.ok(boardPost)
     }
 }

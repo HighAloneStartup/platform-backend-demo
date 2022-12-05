@@ -10,7 +10,8 @@ import java.time.Instant
 import java.util.ArrayList
 
 class PostResponse(
-        boardPost: BoardPost
+        boardPost: BoardPost,
+        liked: Boolean = false,
 )
 {
         val id: String = boardPost.id
@@ -26,7 +27,8 @@ class PostResponse(
         val anonymous: Boolean = boardPost.anonymous
         val createdAt: Instant = boardPost.createdAt
 
-        var isLiked: Boolean = boardPost.likes.contains(uid)
-        var images: ArrayList<String> = boardPost.images
-        var comments: ArrayList<Comment> = boardPost.comments
+        val liked: Boolean = liked
+        val likes: Int = boardPost.likes.size
+        val images: ArrayList<String> = boardPost.images
+        val comments: ArrayList<Comment> = boardPost.comments
 }

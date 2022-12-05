@@ -23,8 +23,8 @@ class BoardPost(
         val anonymous: Boolean = true,
 
         val createdAt: Instant = Instant.now(),
-        @DBRef
-        var likes: ArrayList<User> = ArrayList<User>(),
+
+        var likes: ArrayList<String> = ArrayList<String>(),
         var images: ArrayList<String> = ArrayList<String>(),
         @DBRef
         var comments: ArrayList<Comment> = ArrayList<Comment>()

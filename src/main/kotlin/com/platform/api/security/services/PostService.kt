@@ -4,6 +4,7 @@ import com.platform.api.models.BoardPost
 import com.platform.api.models.Comment
 import com.platform.api.models.User
 import com.platform.api.payload.request.PostRequest
+import com.platform.api.payload.response.PostResponse
 import com.platform.api.repository.BoardRepository
 import com.platform.api.repository.UserRepository
 import org.bson.types.ObjectId
@@ -67,6 +68,7 @@ class PostService(
         }
 
         val afterBoardPost = BoardPost(
+            id =beforeBoardPost.id,
             title = postRequest.title,
             description = postRequest.description,
             published = postRequest.published,
@@ -80,23 +82,25 @@ class PostService(
         return afterBoardPost;
     }
 
-    fun updateLike(id: String): BoardPost {
+    fun updateLike(id: String): PostResponse {
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val _user: User = userRepository.findById(userDetailsImpl.id).get()
+        val _user_uid = _user.uid
 
         val beforeBoardPost = boardRepository.findById(id).get()
 
         val newlikes = beforeBoardPost.likes
-
-        if(newlikes.contains(_user)){
-            newlikes.remove(_user)
+        val liked = newlikes.contains(_user_uid)
+        if(liked){
+            newlikes.remove(_user_uid)
         }
         else
         {
-            newlikes.add(_user)
+            newlikes.add(_user_uid)
         }
 
         val afterBoardPost = BoardPost(
+                id = beforeBoardPost.id,
                 title = beforeBoardPost.title,
                 description = beforeBoardPost.description,
                 published = beforeBoardPost.published,
@@ -108,6 +112,8 @@ class PostService(
                 likes = newlikes
         )
         boardRepository.save(afterBoardPost)
-        return afterBoardPost;
+
+
+        return PostResponse(afterBoardPost, !liked);
     }
 }

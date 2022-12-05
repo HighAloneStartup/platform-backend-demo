@@ -40,8 +40,6 @@ open class BoardController(
             }
         } catch (e: Exception)
         {
-            System.out.println(e)
-
             ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
@@ -70,6 +68,7 @@ open class BoardController(
         return if (postData.isPresent)
         {
             var postResponse = PostResponse(postData.get())
+            System.out.println(postResponse)
             ResponseEntity(postResponse, HttpStatus.OK)
         }
         else

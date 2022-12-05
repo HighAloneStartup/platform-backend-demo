@@ -25,6 +25,20 @@ class PostService(
         val userRepository: UserRepository
 )
 {
+    fun getPost(id: String?): PostResponse{
+        val post = boardRepository.findById(id).get()
+
+        val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
+        val _user: User = userRepository.findById(userDetailsImpl.id).get()
+        val _user_uid = _user.uid
+
+        val newlikes = post.likes
+        val liked = newlikes.contains(_user_uid)
+
+        return PostResponse(post, liked)
+    }
+
+
     fun insertPost(postRequest: PostRequest): BoardPost {
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val _user: User = userRepository.findById(userDetailsImpl.id).get()

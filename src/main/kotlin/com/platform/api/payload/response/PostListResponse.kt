@@ -19,7 +19,7 @@ class PostListResponse (
     val id: String = boardPost.id
     val title: String = boardPost.title
     val description: String = if(boardPost.description.length > 17)
-        boardPost.description.substring(0, 17) +  "..." else  boardPost.description + "..."
+        boardPost.description.substring(0, 17) +  "..." else  boardPost.description
     val published: Boolean = boardPost.published
 
     val uid: String = boardPost.user.uid

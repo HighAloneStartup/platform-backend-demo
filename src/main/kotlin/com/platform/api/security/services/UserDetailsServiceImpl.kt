@@ -66,7 +66,9 @@ open class UserDetailsServiceImpl(
                 generationNumber = user.generationNumber,
                 studentNumber = user.studentNumber,
                 birthday = user.birthday,
-                phoneNumber = user.phoneNumber
+                phoneNumber = user.phoneNumber,
+                photoUrl = user.photoUrl
+
         )
 
         userRepository.save(updatedUser)

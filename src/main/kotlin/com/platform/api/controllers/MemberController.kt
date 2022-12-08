@@ -23,7 +23,6 @@ open class MemberController(
 )
 {
     @GetMapping("/")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun getUsers(@RequestParam(required = false)
                  gradeYear: Int?,
                 classGroup: Int?): ResponseEntity<*>
@@ -59,7 +58,6 @@ open class MemberController(
     }
 
     @GetMapping("/mine")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun getMine() : ResponseEntity<*>
     {
         val user = userDetailsService.loadMyUser()

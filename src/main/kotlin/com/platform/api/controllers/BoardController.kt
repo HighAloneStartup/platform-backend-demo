@@ -57,23 +57,17 @@ open class BoardController(
     {
         try
         {
-            val boardRoles = boardService.getBoardRolesByName(boardName)
-            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
-            if(hasRole)
+            postRepository.setCollectionName(boardName)
+            var boardPosts: List<BoardPost> = postRepository.findAll() as List<BoardPost>
+            if (boardPosts.isEmpty())
             {
-                postRepository.setCollectionName(boardName)
-                var boardPosts: List<BoardPost> = postRepository.findAll() as List<BoardPost>
-                if (boardPosts.isEmpty())
-                {
-                    return ResponseEntity(HttpStatus.NO_CONTENT)
-                }
-                else
-                {
-                    var postListResponse = boardPosts.map{ PostListResponse(it) }
-                    return ResponseEntity(postListResponse, HttpStatus.OK)
-                }
+                return ResponseEntity(HttpStatus.NO_CONTENT)
             }
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+            else
+            {
+                var postListResponse = boardPosts.map{ PostListResponse(it) }
+                return ResponseEntity(postListResponse, HttpStatus.OK)
+            }
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -106,9 +100,15 @@ open class BoardController(
     {
         try
         {
-            val user = userDetailsServiceImpl.loadMyUser();
-            val boardPost = postService.insertPost(boardName, postRequest);
-            return ResponseEntity(PostResponse(boardPost, user.uid), HttpStatus.CREATED)
+            val boardRoles = boardService.getBoardRolesByName(boardName)
+            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
+            if(hasRole)
+            {
+                val user = userDetailsServiceImpl.loadMyUser();
+                val boardPost = postService.insertPost(boardName, postRequest);
+                return ResponseEntity(PostResponse(boardPost, user.uid), HttpStatus.CREATED)
+            }
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -119,9 +119,16 @@ open class BoardController(
     open fun updatePost(@PathVariable("name") boardName: String, @PathVariable("id") id: String, @RequestBody postRequest: PostRequest): ResponseEntity<PostResponse>
     {
         try{
-            val user = userDetailsServiceImpl.loadMyUser();
-            val boardPost = postService.updatePost(boardName, id, postRequest)
-            return ResponseEntity.ok(PostResponse(boardPost, user.uid))
+            val boardRoles = boardService.getBoardRolesByName(boardName)
+            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
+            if(hasRole)
+            {
+
+                val user = userDetailsServiceImpl.loadMyUser();
+                val boardPost = postService.updatePost(boardName, id, postRequest)
+                return ResponseEntity.ok(PostResponse(boardPost, user.uid))
+            }
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)

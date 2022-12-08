@@ -8,9 +8,11 @@ import com.platform.api.payload.response.PostResponse
 import com.platform.api.repository.PostRepository
 import com.platform.api.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.mongodb.core.mapping.DBRef
 import org.springframework.security.core.context.SecurityContextHolder
 
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.ArrayList
 
 @Service
@@ -80,15 +82,17 @@ class PostService(
         }
 
         val afterBoardPost = BoardPost(
-            id =beforeBoardPost.id,
-            title = postRequest.title,
-            description = postRequest.description,
-            published = postRequest.published,
+                id =beforeBoardPost.id,
+                title = postRequest.title,
+                description = postRequest.description,
+                published = postRequest.published,
 
-            user = beforeBoardPost.user,
-
-            anonymous = postRequest.anonymous,
-            images = imagesPath
+                user = beforeBoardPost.user,
+                anonymous = postRequest.anonymous,
+                createdAt = beforeBoardPost.createdAt,
+                likes = beforeBoardPost.likes,
+                images = imagesPath,
+                comments = beforeBoardPost.comments
         )
 
         postRepository.setCollectionName(name)
@@ -122,8 +126,10 @@ class PostService(
                 user = beforeBoardPost.user,
 
                 anonymous = beforeBoardPost.anonymous,
+                createdAt = beforeBoardPost.createdAt,
+                likes = newlikes,
                 images = beforeBoardPost.images,
-                likes = newlikes
+                comments = beforeBoardPost.comments
         )
         postRepository.setCollectionName(name)
         postRepository.save(afterBoardPost)
@@ -131,6 +137,8 @@ class PostService(
 
         return PostResponse(afterBoardPost, _user_uid);
     }
+
+
 
     fun updateComment(name:String, id: String, comment: Comment): PostResponse {
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
@@ -151,6 +159,8 @@ class PostService(
                 user = beforeBoardPost.user,
 
                 anonymous = beforeBoardPost.anonymous,
+                createdAt = beforeBoardPost.createdAt,
+                likes = beforeBoardPost.likes,
                 images = beforeBoardPost.images,
                 comments = comments
         )

@@ -23,7 +23,6 @@ open class NoticeController(
         private val noticeService: NoticeService
 ) {
     @GetMapping("/notices")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun getAllTutorials(): ResponseEntity<List<NoticeListResponse>> {
         return try {
             var noticePosts: List<NoticePost> = noticeRepository.findAll() as List<NoticePost>
@@ -50,7 +49,6 @@ open class NoticeController(
     }
 
     @GetMapping("/notices/{id}")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun getPostById(@PathVariable("id") id: String?): ResponseEntity<NoticeResponse> {
 
         return try {
@@ -74,7 +72,6 @@ open class NoticeController(
     }
 
     @DeleteMapping("/notices/{id}")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun deleteTutorial(@PathVariable("id") id: String?): ResponseEntity<HttpStatus> {
         return try {
             noticeRepository.deleteById(id)
@@ -85,7 +82,6 @@ open class NoticeController(
     }
 
     @PutMapping("/notices/like/{id}")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('MODERATOR') or hasRole('ADMIN')")
     open fun updateLike(@PathVariable("id") id: String): ResponseEntity<NoticeResponse> {
         val noticePost = noticeService.updateLike(id)
 

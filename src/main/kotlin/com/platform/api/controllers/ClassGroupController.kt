@@ -1,11 +1,13 @@
 package com.platform.api.controllers
 
 import com.platform.api.models.BoardPost
+import com.platform.api.payload.request.CommentRequest
 import com.platform.api.payload.request.PostRequest
 import com.platform.api.payload.response.ClassGroupPostListResponse
 import com.platform.api.payload.response.PostResponse
 import com.platform.api.repository.ClassGroupRepository
 import com.platform.api.repository.PostRepository
+import com.platform.api.security.services.CommentService
 import com.platform.api.security.services.PostService
 import com.platform.api.security.services.UserDetailsServiceImpl
 import org.springframework.http.HttpStatus
@@ -19,7 +21,7 @@ open class ClassGroupController(
         private val userDetailsServiceImpl: UserDetailsServiceImpl,
         private val postService: PostService,
         private val postRepository : PostRepository,
-        private val classGroupRepository: ClassGroupRepository
+        private val commentService: CommentService
 )
 {
 //    @PostMapping("/pushclass")
@@ -127,6 +129,22 @@ open class ClassGroupController(
         try {
             val boardPost = postService.updateLike(boardName, id)
 
+            return ResponseEntity.ok(boardPost)
+        } catch (e: Exception)
+        {
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    @PutMapping("/classes/{name}/{id}/comment")
+    open fun updateLike(@PathVariable("name") boardName: String,
+                        @PathVariable("id") id: String,
+                        @RequestBody commentRequest: CommentRequest): ResponseEntity<PostResponse>
+    {
+        try {
+            var comment = commentService.postComment(commentRequest)
+            comment = commentService.getComment(comment.description)
+            val boardPost = postService.updateComment(boardName, id, comment)
             return ResponseEntity.ok(boardPost)
         } catch (e: Exception)
         {

@@ -73,8 +73,7 @@ open class BoardController(
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
         } catch (e: Exception)
         {
-            System.out.println(e)
-            return ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -100,7 +99,7 @@ open class BoardController(
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
         } catch (e: Exception)
         {
-            return ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -119,7 +118,7 @@ open class BoardController(
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
         } catch (e: Exception)
         {
-            return ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -137,7 +136,7 @@ open class BoardController(
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
         } catch (e: Exception)
         {
-            return ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR)
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -160,7 +159,7 @@ open class BoardController(
         }
     }
 
-    @PutMapping("/boards/{name}/like/{id}")
+    @PutMapping("/boards/{name}/{id}/like")
     open fun updateLike(@PathVariable("name") boardName: String, @PathVariable("id") id: String): ResponseEntity<PostResponse>
     {
         try {

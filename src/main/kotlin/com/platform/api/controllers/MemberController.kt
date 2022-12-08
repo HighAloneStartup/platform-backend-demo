@@ -71,7 +71,6 @@ open class MemberController(
     @PutMapping("/mine")
     open fun updateMine(@RequestBody profileRequest: ProfileRequest) : ResponseEntity<*>
     {
-        profileRequest
         val user = userDetailsService.updateMyUser(profileRequest)
         var userResponse = UserResponse(user)
 

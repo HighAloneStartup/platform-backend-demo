@@ -9,8 +9,8 @@ import java.util.ArrayList
 import java.util.HashSet
 
 
-@Document(collection = "posts")
-class BoardPost(
+@Document(collection = "#{@postRepository.getCollectionName()}")
+open class BoardPost(
         @Id
         val id: String = String(),
         val title: String = String(),

@@ -75,4 +75,25 @@ open class UserDetailsServiceImpl(
 
         return updatedUser
     }
+
+    open fun checkUserRole(roles: ArrayList<Role>) : Boolean
+    {
+        val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
+        val user = userRepository.findById(userDetailsImpl.id).get()
+        val userRoles = user.roles
+        for (userRole in user.roles)
+        {
+            for(role in roles)
+            {
+                if(userRole.id == role.id)
+                {
+                    return true;
+                }
+
+            }
+        }
+
+        return false;
+    }
+
 }

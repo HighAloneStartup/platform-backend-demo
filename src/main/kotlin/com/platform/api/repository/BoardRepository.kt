@@ -1,12 +1,11 @@
 package com.platform.api.repository
 
+import com.platform.api.models.Board
 import com.platform.api.models.BoardPost
-import org.bson.types.ObjectId
 import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.stereotype.Repository
 
-
-interface BoardRepository : MongoRepository<BoardPost, String>
-{
-    fun findByPublished(published: Boolean): List<BoardPost>
-    fun findByTitleContaining(title: String): List<BoardPost>
+@Repository
+interface BoardRepository : MongoRepository<Board, String> {
+    fun findByName(name: String): Board
 }

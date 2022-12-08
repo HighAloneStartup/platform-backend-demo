@@ -1,32 +1,27 @@
 package com.platform.api.security.services
 
 import com.platform.api.models.BoardPost
-import com.platform.api.models.Comment
 import com.platform.api.models.User
 import com.platform.api.payload.request.PostRequest
 import com.platform.api.payload.response.PostResponse
-import com.platform.api.repository.BoardRepository
+import com.platform.api.repository.PostRepository
 import com.platform.api.repository.UserRepository
-import org.bson.types.ObjectId
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.DBRef
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 
 import org.springframework.stereotype.Service
-import java.time.Instant
 import java.util.ArrayList
 
 @Service
 class PostService(
-        val boardRepository: BoardRepository,
-        val userRepository: UserRepository
+        @Autowired
+        private val postRepository: PostRepository,
+        @Autowired
+        private val userRepository: UserRepository
 )
 {
     fun getPost(id: String?): PostResponse{
-        val post = boardRepository.findById(id).get()
+        val post = postRepository.findById(id).get()
 
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val _user: User = userRepository.findById(userDetailsImpl.id).get()
@@ -39,7 +34,7 @@ class PostService(
     }
 
 
-    fun insertPost(postRequest: PostRequest): BoardPost {
+    fun insertPost(collectionName:String, postRequest: PostRequest): BoardPost {
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val _user: User = userRepository.findById(userDetailsImpl.id).get()
 
@@ -63,13 +58,16 @@ class PostService(
             anonymous = postRequest.anonymous,
             images = imagesPath
         )
-        boardPost = boardRepository.save(boardPost)
+
+        postRepository.setCollectionName(collectionName)
+        boardPost = postRepository.save(boardPost)
+        System.out.println("hi")
 
         return boardPost;
     }
 
     fun updatePost(id: String, postRequest: PostRequest): BoardPost {
-        val beforeBoardPost = boardRepository.findById(id).get()
+        val beforeBoardPost = postRepository.findById(id).get()
 
         val imagesPath : ArrayList<String>
         if(postRequest.images !=null)
@@ -92,7 +90,9 @@ class PostService(
             anonymous = postRequest.anonymous,
             images = imagesPath
         )
-        boardRepository.save(afterBoardPost)
+        System.out.println(postRepository)
+        System.out.println(postRepository.getCollectionName())
+        postRepository.save(afterBoardPost)
         return afterBoardPost;
     }
 
@@ -101,7 +101,7 @@ class PostService(
         val _user: User = userRepository.findById(userDetailsImpl.id).get()
         val _user_uid = _user.uid
 
-        val beforeBoardPost = boardRepository.findById(id).get()
+        val beforeBoardPost = postRepository.findById(id).get()
 
         val newlikes = beforeBoardPost.likes
         val liked = newlikes.contains(_user_uid)
@@ -125,7 +125,7 @@ class PostService(
                 images = beforeBoardPost.images,
                 likes = newlikes
         )
-        boardRepository.save(afterBoardPost)
+        postRepository.save(afterBoardPost)
 
 
         return PostResponse(afterBoardPost, !liked);

@@ -23,7 +23,6 @@ open class UserDetailsServiceImpl(
         private val roleRepository: RoleRepository
 ) : UserDetailsService
 {
-
     @Transactional
     @Throws(UsernameNotFoundException::class)
     override fun loadUserByUsername(email: String): UserDetails
@@ -80,6 +79,44 @@ open class UserDetailsServiceImpl(
         userRepository.save(updatedUser)
 
         return updatedUser
+    }
+
+    open fun updateUser(uid:String, profileRequest: ProfileRequest): User
+    {
+        val user = userRepository.findById(uid).get()
+
+        val roles = ArrayList<Role>()
+
+        for(roleString in profileRequest.roles!!)
+        {
+            var role = roleRepository.findByName(roleString)
+            roles.add(role!!)
+        }
+
+        if(profileRequest.roles.size == 0)
+        {
+            var role = roleRepository.findByName("ROLE_STUDENT")!!
+            roles.add(role)
+        }
+
+        val updatedUser = User(
+                uid = user.uid,
+                name = user.name,
+                roles = roles,
+                email = user.email,
+                encryptedPassword = user.encryptedPassword,
+                gradeYear = profileRequest.gradeYear,
+                classGroup = profileRequest.classGroup,
+                attendanceNumber = user.attendanceNumber,
+                generationNumber = user.generationNumber,
+                studentNumber = user.studentNumber,
+                birthday = user.birthday,
+                phoneNumber = profileRequest.phoneNumber,
+                photoUrl = profileRequest.photoUrl
+
+        )
+
+        return userRepository.save(updatedUser)
     }
 
     open fun checkUserRole(roles: ArrayList<Role>) : Boolean

@@ -76,4 +76,13 @@ open class MemberController(
 
         return ResponseEntity.ok(userResponse)
     }
+
+    @PutMapping("/{id}")
+    open fun updateUser(@PathVariable("id") uid: String, @RequestBody profileRequest: ProfileRequest) : ResponseEntity<*>
+    {
+        val user = userDetailsService.updateUser(uid, profileRequest)
+        var userResponse = UserResponse(user)
+
+        return ResponseEntity.ok(userResponse)
+    }
 }

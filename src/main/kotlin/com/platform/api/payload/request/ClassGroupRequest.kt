@@ -7,7 +7,7 @@ import java.util.ArrayList
 
 class ClassGroupRequest (
         val name: String = String(),
-        val year: Int,
-        val grade: Int,
-        val classGroup: Int
+        val gradeYear: Int,
+        val classGroup: Int,
+        val roles: ArrayList<String>
 )

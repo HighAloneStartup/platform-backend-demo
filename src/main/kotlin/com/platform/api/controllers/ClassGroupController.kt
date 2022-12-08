@@ -1,12 +1,17 @@
 package com.platform.api.controllers
 
 import com.platform.api.models.BoardPost
+import com.platform.api.models.ClassGroup
+import com.platform.api.models.Role
+import com.platform.api.payload.request.ClassGroupRequest
 import com.platform.api.payload.request.CommentRequest
 import com.platform.api.payload.request.PostRequest
 import com.platform.api.payload.response.ClassGroupPostListResponse
 import com.platform.api.payload.response.PostResponse
 import com.platform.api.repository.ClassGroupRepository
 import com.platform.api.repository.PostRepository
+import com.platform.api.repository.RoleRepository
+import com.platform.api.security.services.ClassGroupService
 import com.platform.api.security.services.CommentService
 import com.platform.api.security.services.PostService
 import com.platform.api.security.services.UserDetailsServiceImpl
@@ -21,24 +26,33 @@ open class ClassGroupController(
         private val userDetailsServiceImpl: UserDetailsServiceImpl,
         private val postService: PostService,
         private val postRepository : PostRepository,
-        private val commentService: CommentService
+        private val commentService: CommentService,
+        private val classGroupRepository: ClassGroupRepository,
+        private val roleRepository:RoleRepository,
+        private val classGroupService: ClassGroupService
 )
 {
-//    @PostMapping("/pushclass")
-//    open fun postBoardRole(@RequestBody classGroupRequest: ClassGroupRequest): ResponseEntity<*>
-//    {
-//        val classGroup = ClassGroup(name = classGroupRequest.name,
-//                year = classGroupRequest.year,
-//        grade = classGroupRequest.grade,
-//        classGroup = classGroupRequest.classGroup
-//        )
-//
-//        //이따가 반 애들 나눠
-//
-//        classGroupRepository.save(classGroup)
-//
-//        return ResponseEntity.ok(classGroup)
-//    }
+    @PostMapping("/pushclass")
+    open fun postBoardRole(@RequestBody classGroupRequest: ClassGroupRequest): ResponseEntity<*>
+    {
+        val roles : ArrayList<Role> = ArrayList<Role>()
+        for(inputRoleString in classGroupRequest.roles)
+        {
+            val role = roleRepository.findByName(inputRoleString)
+            roles.add(role!!)
+        }
+
+        val classGroup = ClassGroup(
+                name = classGroupRequest.name,
+                gradeYear = classGroupRequest.gradeYear,
+                classGroup = classGroupRequest.classGroup,
+                roles = roles
+        )
+
+        classGroupRepository.save(classGroup)
+
+        return ResponseEntity.ok(classGroup)
+    }
 
     @GetMapping("/classes/{name}")
     open fun getAllPosts(@PathVariable("name") name: String): ResponseEntity<List<ClassGroupPostListResponse>>
@@ -88,9 +102,15 @@ open class ClassGroupController(
     {
         try
         {
-            val user = userDetailsServiceImpl.loadMyUser();
-            val boardPost = postService.insertPost(boardName, postRequest);
-            return ResponseEntity(PostResponse(boardPost, user.uid), HttpStatus.CREATED)
+            val boardRoles = classGroupService.getClassGroupRolesByName(boardName)
+            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
+            if(hasRole)
+            {
+                val user = userDetailsServiceImpl.loadMyUser();
+                val boardPost = postService.insertPost(boardName, postRequest);
+                return ResponseEntity(PostResponse(boardPost, user.uid), HttpStatus.CREATED)
+            }
+            return ResponseEntity(HttpStatus.UNAUTHORIZED)
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)

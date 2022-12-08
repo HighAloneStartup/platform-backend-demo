@@ -12,10 +12,10 @@ class ClassGroup (
         @Id
         val id: String = String(),
         val name: String = String(),
-        val year: Int,
-        val grade: Int,
+        val gradeYear: Int,
         val classGroup: Int,
-        val uids: ArrayList<String> = ArrayList<String>(),
+        @DBRef
+        val roles: ArrayList<Role> = ArrayList<Role>(),
         val photoUrl: String = String()
 )
 {

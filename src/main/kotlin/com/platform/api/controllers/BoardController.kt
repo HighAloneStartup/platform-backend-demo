@@ -5,12 +5,14 @@ import com.platform.api.repository.PostRepository
 import com.platform.api.models.BoardPost
 import com.platform.api.models.Role
 import com.platform.api.payload.request.BoardRequest
+import com.platform.api.payload.request.CommentRequest
 import com.platform.api.payload.request.PostRequest
 import com.platform.api.payload.response.PostListResponse
 import com.platform.api.payload.response.PostResponse
 import com.platform.api.repository.BoardRepository
 import com.platform.api.repository.RoleRepository
 import com.platform.api.security.services.BoardService
+import com.platform.api.security.services.CommentService
 import com.platform.api.security.services.PostService
 import com.platform.api.security.services.UserDetailsServiceImpl
 import org.springframework.http.HttpStatus
@@ -28,7 +30,8 @@ open class BoardController(
         private val boardRepository: BoardRepository,
         private val boardService: BoardService,
         private val postRepository: PostRepository,
-        private val postService: PostService
+        private val postService: PostService,
+        private val commentService: CommentService
 )
 {
     @PostMapping("/pushrole")
@@ -81,22 +84,17 @@ open class BoardController(
     open fun getPostById(@PathVariable("name") boardName: String, @PathVariable("id") id: String?): ResponseEntity<PostResponse>
     {
         try{
-            val boardRoles = boardService.getBoardRolesByName(boardName)
-            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
-            if(hasRole)
+            val postData = postRepository.findById(id)
+            return if (postData.isPresent)
             {
-                val postData = postRepository.findById(id)
-                return if (postData.isPresent)
-                {
-                    var postResponse = PostResponse(postData.get())
-                    ResponseEntity(postResponse, HttpStatus.OK)
-                }
-                else
-                {
-                    ResponseEntity(HttpStatus.NOT_FOUND)
-                }
+                val user = userDetailsServiceImpl.loadMyUser();
+                val postResponse = PostResponse(postData.get(), user.uid)
+                ResponseEntity(postResponse, HttpStatus.OK)
             }
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+            else
+            {
+                ResponseEntity(HttpStatus.NOT_FOUND)
+            }
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -108,14 +106,9 @@ open class BoardController(
     {
         try
         {
-            val boardRoles = boardService.getBoardRolesByName(boardName)
-            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
-            if(hasRole)
-            {
-                val boardPost = postService.insertPost(boardName, postRequest);
-                return ResponseEntity(PostResponse(boardPost), HttpStatus.CREATED)
-            }
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+            val user = userDetailsServiceImpl.loadMyUser();
+            val boardPost = postService.insertPost(boardName, postRequest);
+            return ResponseEntity(PostResponse(boardPost, user.uid), HttpStatus.CREATED)
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -126,14 +119,9 @@ open class BoardController(
     open fun updatePost(@PathVariable("name") boardName: String, @PathVariable("id") id: String, @RequestBody postRequest: PostRequest): ResponseEntity<PostResponse>
     {
         try{
-            val boardRoles = boardService.getBoardRolesByName(boardName)
-            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
-            if(hasRole)
-            {
-                val boardPost = postService.updatePost(id, postRequest)
-                return ResponseEntity.ok(PostResponse(boardPost))
-            }
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+            val user = userDetailsServiceImpl.loadMyUser();
+            val boardPost = postService.updatePost(boardName, id, postRequest)
+            return ResponseEntity.ok(PostResponse(boardPost, user.uid))
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -145,14 +133,8 @@ open class BoardController(
     {
         try
         {
-            val boardRoles = boardService.getBoardRolesByName(boardName)
-            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
-            if(hasRole)
-            {
-                postRepository.deleteById(id)
-                return ResponseEntity(HttpStatus.NO_CONTENT)
-            }
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+            postRepository.deleteById(id)
+            return ResponseEntity(HttpStatus.NO_CONTENT)
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -163,14 +145,24 @@ open class BoardController(
     open fun updateLike(@PathVariable("name") boardName: String, @PathVariable("id") id: String): ResponseEntity<PostResponse>
     {
         try {
-            val boardRoles = boardService.getBoardRolesByName(boardName)
-            val hasRole = userDetailsServiceImpl.checkUserRole(boardRoles)
-            if (hasRole) {
-                val boardPost = postService.updateLike(id)
+            val boardPost = postService.updateLike(boardName, id)
+            return ResponseEntity.ok(boardPost)
+        } catch (e: Exception)
+        {
+            return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 
-                return ResponseEntity.ok(boardPost)
-            }
-            return ResponseEntity(HttpStatus.UNAUTHORIZED)
+    @PutMapping("/boards/{name}/{id}/comment")
+    open fun updateLike(@PathVariable("name") boardName: String,
+                        @PathVariable("id") id: String,
+                        @RequestBody commentRequest: CommentRequest): ResponseEntity<PostResponse>
+    {
+        try {
+            var comment = commentService.postComment(commentRequest)
+            comment = commentService.getComment(comment.description)
+            val boardPost = postService.updateComment(boardName, id, comment)
+            return ResponseEntity.ok(boardPost)
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)

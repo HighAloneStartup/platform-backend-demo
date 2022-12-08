@@ -7,6 +7,7 @@ import com.platform.api.payload.response.PostResponse
 import com.platform.api.repository.ClassGroupRepository
 import com.platform.api.repository.PostRepository
 import com.platform.api.security.services.PostService
+import com.platform.api.security.services.UserDetailsServiceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api")
 open class ClassGroupController(
+        private val userDetailsServiceImpl: UserDetailsServiceImpl,
         private val postService: PostService,
         private val postRepository : PostRepository,
         private val classGroupRepository: ClassGroupRepository
@@ -65,7 +67,8 @@ open class ClassGroupController(
             val postData = postRepository.findById(id)
             return if (postData.isPresent)
             {
-                val postResponse = PostResponse(postData.get())
+                val user = userDetailsServiceImpl.loadMyUser();
+                val postResponse = PostResponse(postData.get(), user.uid)
                 ResponseEntity(postResponse, HttpStatus.OK)
             }
             else
@@ -83,8 +86,9 @@ open class ClassGroupController(
     {
         try
         {
+            val user = userDetailsServiceImpl.loadMyUser();
             val boardPost = postService.insertPost(boardName, postRequest);
-            return ResponseEntity(PostResponse(boardPost), HttpStatus.CREATED)
+            return ResponseEntity(PostResponse(boardPost, user.uid), HttpStatus.CREATED)
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -95,8 +99,9 @@ open class ClassGroupController(
     open fun updatePost(@PathVariable("name") boardName: String, @PathVariable("id") id: String, @RequestBody postRequest: PostRequest): ResponseEntity<PostResponse>
     {
         try{
-            val boardPost = postService.updatePost(id, postRequest)
-            return ResponseEntity.ok(PostResponse(boardPost))
+            val user = userDetailsServiceImpl.loadMyUser();
+            val boardPost = postService.updatePost(boardName, id, postRequest)
+            return ResponseEntity.ok(PostResponse(boardPost, user.uid))
         } catch (e: Exception)
         {
             return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -120,7 +125,7 @@ open class ClassGroupController(
     open fun updateLike(@PathVariable("name") boardName: String, @PathVariable("id") id: String): ResponseEntity<PostResponse>
     {
         try {
-            val boardPost = postService.updateLike(id)
+            val boardPost = postService.updateLike(boardName, id)
 
             return ResponseEntity.ok(boardPost)
         } catch (e: Exception)

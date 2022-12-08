@@ -14,3 +14,9 @@ class Board (
     @DBRef
     val roles: ArrayList<Role> = ArrayList<Role>()
 )
+{
+    open fun getObjectId(): String
+    {
+        return id
+    }
+}

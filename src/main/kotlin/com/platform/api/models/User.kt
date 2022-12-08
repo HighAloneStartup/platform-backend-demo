@@ -28,3 +28,9 @@ class User(
 
         var photoUrl: String? = null
 )
+{
+        open fun getObjectId(): String
+        {
+                return uid
+        }
+}

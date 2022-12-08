@@ -18,3 +18,10 @@ class ClassGroup (
         val uids: ArrayList<String> = ArrayList<String>(),
         val photoUrl: String = String()
 )
+{
+        open fun getObjectId(): String
+        {
+                return id
+        }
+}
+

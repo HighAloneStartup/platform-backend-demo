@@ -74,50 +74,14 @@ open class AuthController(
                     .body(MessageResponse("Error: Email is already in use!"))
         }
 
-        val strRoles: Set<String>? = registerRequest.roles
+        val strRoles: ArrayList<String>? = registerRequest.roles
         val roles: ArrayList<Role> = ArrayList<Role>()
 
         if (strRoles == null)
         {
-            val userRole: Role? = roleRepository.findByName("ROLE_STUDENT")
-            if (userRole != null) {
-                roles.add(userRole)
-            }
+            val userRole: Role = roleRepository.findByName("ROLE_STUDENT")!!
+            roles.add(userRole)
         }
-        else
-        {
-            for(strRole in strRoles)
-            {
-                when (strRole)
-                {
-                    "admin" ->
-                    {
-                        val adminRole: Role? = roleRepository.findByName("ROLE_ADMIN")
-                        if (adminRole != null)
-                        {
-                            roles.add(adminRole)
-                        }
-                    }
-                    "mod" ->
-                    {
-                        val modRole: Role? = roleRepository.findByName("ROLE_MODERATOR")
-                        if (modRole != null)
-                        {
-                            roles.add(modRole)
-                        }
-                    }
-                    else ->
-                    {
-                        val userRole: Role? = roleRepository.findByName("ROLE_STUDENT")
-                        if (userRole != null)
-                        {
-                            roles.add(userRole)
-                        }
-                    }
-                }
-            }
-        }
-
 
         val user = UserFactory.newInitialUser(registerRequest, roles)
 

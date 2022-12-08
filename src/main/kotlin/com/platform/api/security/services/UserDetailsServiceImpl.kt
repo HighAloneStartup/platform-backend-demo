@@ -54,6 +54,12 @@ open class UserDetailsServiceImpl(
             roles.add(role!!)
         }
 
+        if(profileRequest.roles.size == 0)
+        {
+            var role = roleRepository.findByName("ROLE_STUDENT")!!
+            roles.add(role)
+        }
+
         val updatedUser = User(
                 uid = user.uid,
                 name = user.name,
@@ -66,8 +72,8 @@ open class UserDetailsServiceImpl(
                 generationNumber = user.generationNumber,
                 studentNumber = user.studentNumber,
                 birthday = user.birthday,
-                phoneNumber = user.phoneNumber,
-                photoUrl = user.photoUrl
+                phoneNumber = profileRequest.phoneNumber,
+                photoUrl = profileRequest.photoUrl
 
         )
 

@@ -1,6 +1,7 @@
 package com.platform.api.security.services
 
 import com.platform.api.models.BoardPost
+import com.platform.api.models.Comment
 import com.platform.api.models.User
 import com.platform.api.payload.request.PostRequest
 import com.platform.api.payload.response.PostResponse
@@ -30,7 +31,7 @@ class PostService(
         val newlikes = post.likes
         val liked = newlikes.contains(_user_uid)
 
-        return PostResponse(post, liked)
+        return PostResponse(post, _user_uid)
     }
 
 
@@ -61,12 +62,11 @@ class PostService(
 
         postRepository.setCollectionName(collectionName)
         boardPost = postRepository.save(boardPost)
-        System.out.println("hi")
 
         return boardPost;
     }
 
-    fun updatePost(id: String, postRequest: PostRequest): BoardPost {
+    fun updatePost(name: String, id: String, postRequest: PostRequest): BoardPost {
         val beforeBoardPost = postRepository.findById(id).get()
 
         val imagesPath : ArrayList<String>
@@ -90,13 +90,13 @@ class PostService(
             anonymous = postRequest.anonymous,
             images = imagesPath
         )
-        System.out.println(postRepository)
-        System.out.println(postRepository.getCollectionName())
+
+        postRepository.setCollectionName(name)
         postRepository.save(afterBoardPost)
         return afterBoardPost;
     }
 
-    fun updateLike(id: String): PostResponse {
+    fun updateLike(name: String, id: String): PostResponse {
         val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
         val _user: User = userRepository.findById(userDetailsImpl.id).get()
         val _user_uid = _user.uid
@@ -125,9 +125,38 @@ class PostService(
                 images = beforeBoardPost.images,
                 likes = newlikes
         )
+        postRepository.setCollectionName(name)
         postRepository.save(afterBoardPost)
 
 
-        return PostResponse(afterBoardPost, !liked);
+        return PostResponse(afterBoardPost, _user_uid);
+    }
+
+    fun updateComment(name:String, id: String, comment: Comment): PostResponse {
+        val userDetailsImpl = SecurityContextHolder.getContext().authentication.principal as UserDetailsImpl;
+        val _user: User = userRepository.findById(userDetailsImpl.id).get()
+        val _user_uid = _user.uid
+
+        val beforeBoardPost = postRepository.findById(id).get()
+
+        var comments = beforeBoardPost.comments
+        comments.add(comment)
+
+        val afterBoardPost = BoardPost(
+                id = beforeBoardPost.id,
+                title = beforeBoardPost.title,
+                description = beforeBoardPost.description,
+                published = beforeBoardPost.published,
+
+                user = beforeBoardPost.user,
+
+                anonymous = beforeBoardPost.anonymous,
+                images = beforeBoardPost.images,
+                comments = comments
+        )
+        postRepository.setCollectionName(name)
+        postRepository.save(afterBoardPost)
+
+        return PostResponse(afterBoardPost, _user_uid);
     }
 }

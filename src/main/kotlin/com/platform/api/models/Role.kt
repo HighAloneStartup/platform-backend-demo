@@ -5,8 +5,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "roles")
 class Role
-{
+(
     @Id
-    var id: String? = null
-    var name: String? = null
+    var id: String,
+    var name: String
+)
+{
+    open fun getObjectId(): String
+    {
+        return id
+    }
 }

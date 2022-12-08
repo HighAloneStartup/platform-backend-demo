@@ -31,4 +31,9 @@ class NoticePost(
     {
         return "Post [id=" + id + ", title=" + title + ", desc=" + description + ", published=" + published + "]"
     }
+
+    open fun getObjectId(): String
+    {
+        return id
+    }
 }

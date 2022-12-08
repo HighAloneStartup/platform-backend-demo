@@ -11,7 +11,7 @@ import java.util.ArrayList
 
 class PostResponse(
         boardPost: BoardPost,
-        liked: Boolean = false,
+        uid: String
 )
 {
         val id: String = boardPost.id
@@ -27,7 +27,7 @@ class PostResponse(
         val anonymous: Boolean = boardPost.anonymous
         val createdAt: Instant = boardPost.createdAt
 
-        val liked: Boolean = liked
+        val liked: Boolean = boardPost.likes.contains(uid)
         val likes: Int = boardPost.likes.size
         val images: ArrayList<String> = boardPost.images
         val comments: ArrayList<Comment> = boardPost.comments
